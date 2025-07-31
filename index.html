@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .input-group {
+            margin: 10px 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>WhatsApp Embedded Signup Configuration</h2>
+        
+        <div class="input-group">
+            <label for="appId">App ID:</label>
+            <input type="text" id="appId" placeholder="Enter your Facebook App ID">
+        </div>
+        
+        <div class="input-group">
+            <label for="configId">Config ID:</label>
+            <input type="text" id="configId" placeholder="Enter your configuration ID">
+        </div>
+        
+        <div class="input-group">
+            <label for="ids">IDs (comma-separated):</label>
+            <input type="text" id="ids" placeholder="Enter IDs separated by commas">
+        </div>
+
+        <!-- Launch button  -->
+        <button onclick="launchWhatsAppSignup()" style="background-color: #1877f2; border: 0; border-radius: 4px; color: #fff; cursor: pointer; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: bold; height: 40px; padding: 0 24px; margin-top: 20px;">Login with Facebook</button>
+    </div>
+
+    <!-- SDK loading -->
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+
+<script>
+  // SDK initialization
+  window.fbAsyncInit = function() {
+    const appId = document.getElementById('appId').value;
+    FB.init({
+      appId: appId, // your app ID goes here
+      autoLogAppEvents: true,
+      xfbml: true,
+      version: 'v23.0' // Graph API version goes here
+    });
+  };
+  
+  // Session logging message event listener
+  window.addEventListener('message', (event) => {
+    if (!event.origin.endsWith('facebook.com')) return;
+    try {
+      const data = JSON.parse(event.data);
+      if (data.type === 'WA_EMBEDDED_SIGNUP') {
+        console.log('message event: ', data); // remove after testing
+        // your code goes here
+      }
+    } catch {
+      console.log('message event: ', event.data); // remove after testing
+      // your code goes here
+    }
+  });
+  
+  // Response callback
+  const fbLoginCallback = (response) => {
+    if (response.authResponse) {
+      const code = response.authResponse.code;
+      console.log('response: ', code); // remove after testing
+      // your code goes here
+    } else {
+      console.log('response: ', response); // remove after testing
+      // your code goes here
+    }
+  }
+  
+  // Launch method and callback registration
+  const launchWhatsAppSignup = () => {
+    const configId = document.getElementById('configId').value;
+    const idsInput = document.getElementById('ids').value;
+    const ids = idsInput.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+    
+    // Reinitialize FB with current appId
+    const appId = document.getElementById('appId').value;
+    
+    // Log the input values
+    console.log('App ID:', appId);
+    console.log('Config ID:', configId);
+    console.log('IDs Input:', idsInput);
+    console.log('Parsed IDs:', ids);
+    
+    FB.init({
+      appId: appId,
+      autoLogAppEvents: true,
+      xfbml: true,
+      version: 'v23.0'
+    });
+    
+    FB.login(fbLoginCallback, {
+      config_id: configId, // your configuration ID goes here
+      response_type: 'code',
+      override_default_response_type: true,
+      extras: {
+        feature: 'whatsapp_embedded_signup',
+        setup: {
+            preVerifiedPhone: {
+                ids: ids
+            }
+        },
+        featureType: 'only_waba_sharing',
+        sessionInfoVersion: '3',
+      }
+    });
+  }
+</script>
+</body>
+</html>
