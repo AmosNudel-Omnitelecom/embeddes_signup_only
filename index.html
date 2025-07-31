@@ -99,9 +99,12 @@
     if (!event.origin.endsWith('facebook.com')) return;
     try {
       const data = JSON.parse(event.data);
+      console.log('All message event: ', data); // Log all messages
+      displayResponse('All Message Event', data);
+      
       if (data.type === 'WA_EMBEDDED_SIGNUP') {
-        console.log('message event: ', data); // remove after testing
-        displayResponse('Message Event', data);
+        console.log('WA_EMBEDDED_SIGNUP message event: ', data);
+        displayResponse('WA_EMBEDDED_SIGNUP Event', data);
         // your code goes here
       }
     } catch {
@@ -125,26 +128,38 @@
   
   // Response callback
   const fbLoginCallback = (response) => {
+    console.log('Full login response: ', response); // Log the complete response
+    displayResponse('Full Login Response', response);
+    
     if (response.authResponse) {
       const code = response.authResponse.code;
-      console.log('response: ', code); // remove after testing
+      console.log('Auth code: ', code);
       displayResponse('Login Response (Code)', { code: code, fullResponse: response });
       // your code goes here
     } else {
-      console.log('response: ', response); // remove after testing
-      displayResponse('Login Response (Error)', response);
+      console.log('Login error/cancellation: ', response);
+      displayResponse('Login Response (Error/Cancelled)', response);
       // your code goes here
     }
   }
   
   // Launch method and callback registration
   const launchWhatsAppSignup = () => {
-    const configId = document.getElementById('configId').value;
-    const idsInput = document.getElementById('ids').value;
-    const ids = idsInput.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+    try {
+      const configId = document.getElementById('configId').value;
+      const idsInput = document.getElementById('ids').value;
+      const ids = idsInput.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
 
-    // Reinitialize FB with current appId
-    const appId = document.getElementById('appId').value;
+      // Reinitialize FB with current appId
+      const appId = document.getElementById('appId').value;
+      
+      // Display the configuration being used
+      displayResponse('Configuration Used', {
+        appId: appId,
+        configId: configId,
+        ids: ids,
+        timestamp: new Date().toISOString()
+      });
   
     FB.init({
       appId: appId,
@@ -153,21 +168,29 @@
       version: 'v23.0'
     });
     
-    FB.login(fbLoginCallback, {
-      config_id: configId, // your configuration ID goes here
-      response_type: 'code',
-      override_default_response_type: true,
-      extras: {
-        feature: 'whatsapp_embedded_signup',
-        setup: {
-            preVerifiedPhone: {
-                ids: ids
-            }
-        },
-        featureType: '',
-        sessionInfoVersion: '3',
-      }
-    });
+      FB.login(fbLoginCallback, {
+        config_id: configId, // your configuration ID goes here
+        response_type: 'code',
+        override_default_response_type: true,
+        extras: {
+          feature: 'whatsapp_embedded_signup',
+          setup: {
+              preVerifiedPhone: {
+                  ids: ids
+              }
+          },
+          featureType: '',
+          sessionInfoVersion: '3',
+        }
+      });
+    } catch (error) {
+      console.error('Error launching WhatsApp signup:', error);
+      displayResponse('Error Launching Signup', {
+        error: error.message,
+        stack: error.stack,
+        timestamp: new Date().toISOString()
+      });
+    }
   }
 </script>
 </body>
