@@ -47,11 +47,6 @@
             <label for="ids">IDs (comma-separated):</label>
             <input type="text" id="ids" placeholder="Enter IDs separated by commas">
         </div>
-        
-        <div class="input-group">
-            <label for="solutionId">Solution ID:</label>
-            <input type="text" id="solutionId" placeholder="Enter your sandbox portfolio ID">
-        </div>
 
         <!-- Launch button  -->
         <button onclick="launchWhatsAppSignup()" style="background-color: #1877f2; border: 0; border-radius: 4px; color: #fff; cursor: pointer; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: bold; height: 40px; padding: 0 24px; margin-top: 20px;">Login with Facebook</button>
@@ -104,18 +99,10 @@
     const configId = document.getElementById('configId').value;
     const idsInput = document.getElementById('ids').value;
     const ids = idsInput.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
-    const solutionId = document.getElementById('solutionId').value;
     
     // Reinitialize FB with current appId
     const appId = document.getElementById('appId').value;
-    
-    // Log the input values
-    console.log('App ID:', appId);
-    console.log('Config ID:', configId);
-    console.log('IDs Input:', idsInput);
-    console.log('Parsed IDs:', ids);
-    console.log('Solution ID:', solutionId);
-    
+  
     FB.init({
       appId: appId,
       autoLogAppEvents: true,
@@ -131,7 +118,6 @@
         feature: 'whatsapp_embedded_signup',
         version: 2,
         setup: {
-            solutionID: solutionId,
             preVerifiedPhone: {
                 ids: ids
             }
