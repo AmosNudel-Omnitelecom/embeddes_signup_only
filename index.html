@@ -49,8 +49,8 @@
         </div>
 
         <div class="input-group">
-            <label for="buisnessId">Buisness ID:</label>
-            <input type="text" id="buisnessId" placeholder="Enter your buisness ID">
+            <label for="businessId">Business ID:</label>
+            <input type="text" id="businessId" placeholder="Enter your business ID">
         </div>
 
         <!-- Launch button  -->
@@ -104,7 +104,7 @@
     const configId = document.getElementById('configId').value;
     const idsInput = document.getElementById('ids').value;
     const ids = idsInput.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
-    const buisnessId = document.getElementById('buisnessId').value;
+    const businessId = document.getElementById('businessId').value;
 
     // Reinitialize FB with current appId
     const appId = document.getElementById('appId').value;
@@ -123,8 +123,8 @@
       extras: {
         feature: 'whatsapp_embedded_signup',
         setup: {
-            buisness: {
-                id: buisnessId,
+            business: {
+                id: businessId,
             },
             preVerifiedPhone: {
                 ids: ids
