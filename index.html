@@ -48,10 +48,6 @@
             <input type="text" id="ids" placeholder="Enter IDs separated by commas">
         </div>
 
-        <div class="input-group">
-            <label for="businessId">Business ID:</label>
-            <input type="text" id="businessId" placeholder="Enter your business ID">
-        </div>
 
         <!-- Launch button  -->
         <button onclick="launchWhatsAppSignup()" style="background-color: #1877f2; border: 0; border-radius: 4px; color: #fff; cursor: pointer; font-family: Helvetica, Arial, sans-serif; font-size: 16px; font-weight: bold; height: 40px; padding: 0 24px; margin-top: 20px;">Login with Facebook</button>
@@ -104,7 +100,6 @@
     const configId = document.getElementById('configId').value;
     const idsInput = document.getElementById('ids').value;
     const ids = idsInput.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
-    const businessId = document.getElementById('businessId').value;
 
     // Reinitialize FB with current appId
     const appId = document.getElementById('appId').value;
@@ -123,9 +118,6 @@
       extras: {
         feature: 'whatsapp_embedded_signup',
         setup: {
-            business: {
-                id: businessId,
-            },
             preVerifiedPhone: {
                 ids: ids
             }
